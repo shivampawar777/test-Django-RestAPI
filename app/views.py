@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Person
-from .serializers import PersonSerializer
+from .serializers import PersonSerializer, LoginSerializer
 
 
 @api_view(['GET', 'POST', 'PUT'])
@@ -12,7 +12,7 @@ def index(request):
         "age" : "18",
     }
     if request.method == 'GET':
-        data = request.GET.get('age')
+        data = request.GET.get('name')
         return Response(data)
     
     elif request.method == 'POST':
@@ -65,5 +65,18 @@ def person(request):
         data = request.data
         obj = Person.objects.get(id=data['id'])
         obj.delete()
-        return Response({"message" : "Person information deleted.."})
+        return Response({"Message" : "Person information deleted.."})
         
+
+@api_view(['POST'])
+def login(request):
+    data = request.data
+    serializer = LoginSerializer(data=data)
+
+    if serializer.is_valid():
+        data = serializer.validated_data
+        data = serializer.data # data can be accepted and...
+        print(data) # the data has been shown into the console log
+        return Response({'Message' : 'Login successfull'})
+
+    return Response(serializer.errors)
